@@ -274,6 +274,25 @@ Si le dossier `sessions/` n'existe pas dans le projet, skip cette étape silenci
 
 ---
 
+## Génération HTML automatique (après chaque mode)
+
+À la fin de chaque run (`generate`, `update`, `schema`), exécute automatiquement le script de build HTML :
+
+```bash
+python3 .claude/skills/doc-generator/scripts/build_html_doc.py --root . --output docs/site.html
+```
+
+Ce script assemble tous les fichiers `.md` de `/docs/` en un **site HTML statique autonome** (`docs/site.html`), navigable, style Linear. Le fichier est self-contained (CSS + JS embarqués, fonctionne sans serveur, zéro dépendance). Il inclut :
+- Sidebar de navigation par sections
+- Recherche en temps réel
+- Table des matières par page
+- Mode sombre/clair
+- Rendu Markdown complet (tables, callouts, code)
+
+Si le script échoue (Python manquant, erreur de lecture), signale-le dans le rapport mais ne bloque pas le run. Les fichiers Markdown sont la source de vérité — le HTML est une couche de présentation.
+
+---
+
 ## Rapport de fin de run
 
 À la fin de chaque run, produis un rapport court à l'utilisateur :
@@ -306,6 +325,7 @@ Le rapport doit faire 15 lignes max. Pas de blabla.
 - Toucher à `project-state.md`, `CONVENTIONS.md`, `DECISIONS.md`, ou aux specs
 - Dépasser 150 lignes dans un fichier sans le scinder
 - Utiliser du jargon inutile dans `README.md`, `OVERVIEW.md`, `FEATURES.md`, ou `how-to/*.md`
+- Écrire du français sans accents, sans cédilles ou avec des fautes d'orthographe/grammaire — chaque fichier doit être en **français correct** (voir Règle 0 du tone-guide). Un fichier avec des mots sans accents (`Derniere`, `Deploye`, `Cloturee`) est rejeté.
 
 ---
 
@@ -318,6 +338,11 @@ Le rapport doit faire 15 lignes max. Pas de blabla.
 - `references/portability.md` — matrice de portabilité : pour chaque fichier de sortie, les sources requises et les fallbacks si absentes. **Lire dans la phase de détection (Étape 0.4) pour décider du mode de fonctionnement.**
 - `references/delegation-rules.md` — règles de délégation aux sous-agents Haiku / Sonnet. **Lire avant toute phase de lecture lourde (Étape 0.5) pour décider qui fait quoi.**
 
-## Script bundlé
+## Scripts bundlés
 
-- `scripts/detect_sources.py` — script Python déterministe de détection des sources. **Exécuter en tout premier** lors de chaque run (Étape 0.1). Ne consomme pas de tokens, retourne un JSON sur stdout.
+- `scripts/detect_sources.py` — détection déterministe des sources. **Exécuter en tout premier** lors de chaque run (Étape 0.1). Retourne un JSON sur stdout.
+- `scripts/build_html_doc.py` — assemble les fichiers `.md` de `/docs/` en un site HTML statique autonome. **Exécuter automatiquement à la fin de chaque run.** Produit `docs/site.html`.
+
+## Asset bundlé
+
+- `assets/doc-site-template.html` — template HTML style Linear (sidebar + recherche + dark mode + TOC). Utilisé par `build_html_doc.py`. Ne pas modifier à la main sauf pour changer le design.
