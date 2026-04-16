@@ -21,51 +21,142 @@ from pathlib import Path
 
 FOLDER_TO_SECTION = {
     ".": "Accueil",
-    "how-to": "Guides par fonctionnalite",
-    "reference": "Reference technique",
-    "reference/decisions": "Fiches de decision",
+    "how-to": "Fonctionnalites",
+    "reference": "Reference",
+    "reference/decisions": "Decisions",
     "explanation": "Architecture",
-    "onboarding": "Demarrage",
+    "onboarding": "Demarrer",
 }
 
 # Patterns used to assign section when folder mapping alone is not enough
 FILENAME_SECTION_PATTERNS = [
-    # Accueil
-    (re.compile(r"^README", re.I), "Accueil"),
-    (re.compile(r"^OVERVIEW", re.I), "Accueil"),
+    # Demarrer
+    (re.compile(r"^README-dev", re.I), "Demarrer"),
+    (re.compile(r"^OVERVIEW", re.I), "Demarrer"),
     # Fonctionnalites
     (re.compile(r"^FEATURES", re.I), "Fonctionnalites"),
-    # Reference technique
-    (re.compile(r"^schema", re.I), "Reference technique"),
-    (re.compile(r"^roles", re.I), "Reference technique"),
-    (re.compile(r"^conventions", re.I), "Reference technique"),
+    # Reference
+    (re.compile(r"^schema", re.I), "Reference"),
+    (re.compile(r"^roles", re.I), "Reference"),
+    (re.compile(r"^conventions", re.I), "Reference"),
     # Architecture
     (re.compile(r"^architecture", re.I), "Architecture"),
     (re.compile(r"^agents?-architecture", re.I), "Architecture"),
     (re.compile(r"^agent-retex", re.I), "Architecture"),
     (re.compile(r"-logic$", re.I), "Architecture"),
-    # Demarrage
-    (re.compile(r"^README-dev", re.I), "Demarrage"),
 ]
 
-# ── Section ordering (used for sorting docs in the final JSON) ───────────────
+# ── Section ordering (matches new sidebar structure) ─────────────────────────
 
 SECTION_ORDER = [
-    "Accueil",
+    "__home__",
+    "Demarrer",
     "Fonctionnalites",
-    "Guides par fonctionnalite",
-    "Reference technique",
-    "Fiches de decision",
+    "Reference",
     "Architecture",
-    "Demarrage",
+    "Decisions",
 ]
 
-# Within each section, we can prioritise certain slugs
-SLUG_PRIORITY = {
-    "readme": 0,
-    "overview": 1,
-    "features": 0,
+# ── Sidebar titles: slug -> clean short title ────────────────────────────────
+
+SIDEBAR_TITLES = {
+    "readme": "ScaleERP",
+    "overview": "Vue d'ensemble",
+    "features": "Liste des features",
+    "onboarding-readme-dev": "Installation locale",
+    # How-to guides
+    "how-to-f1-auth-guide": "Authentification",
+    "how-to-f2-referentiel-guide": "Referentiel",
+    "how-to-f2-bis-tjm-guide": "Gestion du TJM",
+    "how-to-f3-grille-guide": "Feuilles de temps",
+    "how-to-f3-multi-guide": "Selection multi-dates",
+    "how-to-f4-validation-guide": "Validation",
+    "how-to-f5-factures-guide": "Facturation",
+    "how-to-f7-invoice-guide": "Detail facture",
+    "how-to-f-releves-guide": "Releves mensuels",
+    "how-to-f-dashboard-flow-guide": "Dashboard validation",
+    "how-to-f8-modification-guide": "Demande de modification",
+    "how-to-f11-portal-home-guide": "Portail client",
+    "how-to-f12-invite-email-guide": "Invitation par email",
+    # Reference
+    "reference-schema": "Schema de la base",
+    "reference-schema-users": "Utilisateurs",
+    "reference-schema-billing": "Facturation",
+    "reference-schema-timesheets": "Feuilles de temps",
+    "reference-schema-email": "Invitations email",
+    "reference-roles": "Roles et permissions",
+    "reference-conventions": "Conventions de code",
+    # Architecture
+    "explanation-architecture": "Vue technique",
+    "explanation-agents-architecture": "Equipe des agents",
+    "explanation-agent-retex": "Retour d'experience",
+    "explanation-billing-logic": "Logique de facturation",
 }
+
+# ── Explicit ordering within sections ────────────────────────────────────────
+
+SLUG_ORDER = {
+    # Demarrer
+    "overview": 0,
+    "onboarding-readme-dev": 1,
+    # Fonctionnalites
+    "features": 0,
+    "how-to-f1-auth-guide": 10,
+    "how-to-f2-referentiel-guide": 11,
+    "how-to-f2-bis-tjm-guide": 12,
+    "how-to-f3-grille-guide": 13,
+    "how-to-f3-multi-guide": 14,
+    "how-to-f4-validation-guide": 15,
+    "how-to-f5-factures-guide": 16,
+    "how-to-f7-invoice-guide": 17,
+    "how-to-f-releves-guide": 18,
+    "how-to-f-dashboard-flow-guide": 19,
+    "how-to-f8-modification-guide": 20,
+    "how-to-f11-portal-home-guide": 21,
+    "how-to-f12-invite-email-guide": 22,
+    # Reference
+    "reference-schema": 0,
+    "reference-schema-users": 1,
+    "reference-schema-billing": 2,
+    "reference-schema-timesheets": 3,
+    "reference-schema-email": 4,
+    "reference-roles": 5,
+    "reference-conventions": 6,
+    # Architecture
+    "explanation-architecture": 0,
+    "explanation-agents-architecture": 1,
+    "explanation-agent-retex": 2,
+    "explanation-billing-logic": 3,
+}
+
+# ── Home page card definitions ───────────────────────────────────────────────
+
+HOME_POPULAR_CARDS = [
+    {
+        "emoji": "&#128203;",  # clipboard
+        "title": "Demarrer",
+        "desc": "Setup local et premiers pas",
+        "target": "overview",
+    },
+    {
+        "emoji": "&#128640;",  # rocket
+        "title": "Features",
+        "desc": "Ce qui est livre et en cours",
+        "target": "features",
+    },
+    {
+        "emoji": "&#128295;",  # wrench
+        "title": "Reference",
+        "desc": "Schema DB, roles, conventions",
+        "target": "reference-schema",
+    },
+    {
+        "emoji": "&#128101;",  # people
+        "title": "Architecture",
+        "desc": "Comment le systeme est construit",
+        "target": "explanation-architecture",
+    },
+]
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -91,6 +182,25 @@ def extract_title(content: str, filename: str) -> str:
     return name.strip().title()
 
 
+def clean_sidebar_title(doc_id: str, raw_title: str) -> str:
+    """Return a clean short title for the sidebar."""
+    # Check explicit mapping first
+    if doc_id in SIDEBAR_TITLES:
+        return SIDEBAR_TITLES[doc_id]
+
+    # Decision files: extract part after ":"
+    decision_match = re.match(r"Fiche de decision \d+\s*:\s*(.+)", raw_title, re.I)
+    if decision_match:
+        return decision_match.group(1).strip()
+
+    # Remove common prefixes
+    for prefix in ["Reference --", "Schema --", "Guide --", "How-to --"]:
+        if raw_title.startswith(prefix):
+            return raw_title[len(prefix):].strip()
+
+    return raw_title
+
+
 def determine_section(relative_path: str) -> str:
     """Determine which sidebar section a doc belongs to."""
     parts = Path(relative_path).parts
@@ -98,7 +208,6 @@ def determine_section(relative_path: str) -> str:
 
     # Check deepest folder match first (e.g. reference/decisions before reference)
     if len(parts) > 1:
-        # Build folder path from parent dirs (relative to docs/)
         folder = "/".join(parts[:-1])
         if folder in FOLDER_TO_SECTION:
             return FOLDER_TO_SECTION[folder]
@@ -114,9 +223,9 @@ def determine_section(relative_path: str) -> str:
         if pattern.search(filename_stem):
             return section
 
-    # Root-level files default to Accueil
+    # Root-level files default to Demarrer
     if len(parts) == 1:
-        return "Accueil"
+        return "Demarrer"
 
     return "Autre"
 
@@ -129,13 +238,10 @@ def section_sort_key(section: str) -> int:
 
 
 def doc_sort_key(doc: dict) -> tuple:
-    """Sort key: section order, then slug priority, then alphabetical title."""
+    """Sort key: section order, then explicit slug order, then alphabetical."""
     sec_idx = section_sort_key(doc["section"])
-    slug_base = doc["id"].split("-")[-1] if "-" in doc["id"] else doc["id"]
-    prio = SLUG_PRIORITY.get(slug_base, 50)
-    # Also check full slug
-    prio = min(prio, SLUG_PRIORITY.get(doc["id"], 50))
-    return (sec_idx, prio, doc["title"].lower())
+    slug_prio = SLUG_ORDER.get(doc["id"], 50)
+    return (sec_idx, slug_prio, doc["title"].lower())
 
 
 def detect_project_name(root: Path) -> str:
@@ -150,6 +256,35 @@ def detect_project_name(root: Path) -> str:
         except (json.JSONDecodeError, OSError):
             pass
     return root.resolve().name
+
+
+# ── Home page generation ────────────────────────────────────────────────────
+
+def generate_home_page(docs: list[dict]) -> dict:
+    """Generate the __home__ doc entry with card data for the home page."""
+    # Collect how-to guides for the feature grid
+    guide_cards = []
+    for doc in docs:
+        if doc["section"] == "Fonctionnalites" and doc["id"] != "features":
+            guide_cards.append({
+                "title": doc["sidebarTitle"],
+                "target": doc["id"],
+            })
+
+    home_data = {
+        "popularCards": HOME_POPULAR_CARDS,
+        "guideCards": guide_cards,
+    }
+
+    return {
+        "id": "__home__",
+        "title": "Accueil",
+        "section": "__home__",
+        "sidebarTitle": "Accueil",
+        "content": "",
+        "path": "",
+        "homeData": home_data,
+    }
 
 
 # ── Main logic ───────────────────────────────────────────────────────────────
@@ -177,17 +312,26 @@ def scan_docs(docs_dir: Path, project_root: Path) -> list[dict]:
         title = extract_title(content, md_file.name)
         doc_id = slugify(rel_to_docs)
         section = determine_section(rel_to_docs)
+        sidebar_title = clean_sidebar_title(doc_id, title)
 
         docs.append({
             "id": doc_id,
             "title": title,
+            "sidebarTitle": sidebar_title,
             "section": section,
             "content": content,
             "path": rel_to_root,
         })
 
-    # Sort by section order then alphabetically
+    # Sort by section order then by explicit slug order
     docs.sort(key=doc_sort_key)
+
+    # Exclude README.md from sidebar (we use __home__ instead)
+    # but keep it in DOC_DATA for search
+    # Generate home page and prepend
+    home = generate_home_page(docs)
+    docs.insert(0, home)
+
     return docs
 
 
@@ -263,7 +407,9 @@ def main():
         print("Attention : aucun fichier .md trouve dans", docs_dir, file=sys.stderr)
         sys.exit(0)
 
-    print(f"[doc-generator] {len(docs)} fichiers Markdown trouves")
+    # __home__ is generated, so actual file count is len-1
+    file_count = len(docs) - 1
+    print(f"[doc-generator] {file_count} fichiers Markdown trouves")
 
     # Build
     generated_date = date.today().isoformat()
@@ -278,6 +424,8 @@ def main():
     print(f"[doc-generator] Sections :")
     sections_count = {}
     for d in docs:
+        if d["section"] == "__home__":
+            continue
         sections_count[d["section"]] = sections_count.get(d["section"], 0) + 1
     for sec in SECTION_ORDER:
         if sec in sections_count:
