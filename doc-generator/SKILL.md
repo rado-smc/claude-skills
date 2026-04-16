@@ -313,7 +313,8 @@ Le rapport doit faire 15 lignes max. Pas de blabla.
 
 - `references/project-config.md` — format de config projet + exemple ScaleERP pré-rempli. **Lire quand tu crées la config au premier run.**
 - `references/formats.md` — templates exacts de chaque fichier de doc produit. **Lire avant d'écrire le premier fichier du mode.**
-- `references/tone-guide.md` — règles de style et d'accessibilité non-tech. **Lire avant la première rédaction de la session.**
+- `references/tone-guide.md` — voix et ton de la documentation (inspiré Stripe) : 10 règles, audiences, vocabulaire par rôle. **Lire avant la première rédaction de la session.**
+- `references/voice-patterns.md` — patterns avancés : anatomie des instructions, documentation des statuts et cycles de vie, micro-patterns linguistiques. **Lire avant d'écrire des `how-to/*` ou des sections de `reference/*` qui documentent des statuts.**
 - `references/portability.md` — matrice de portabilité : pour chaque fichier de sortie, les sources requises et les fallbacks si absentes. **Lire dans la phase de détection (Étape 0.4) pour décider du mode de fonctionnement.**
 - `references/delegation-rules.md` — règles de délégation aux sous-agents Haiku / Sonnet. **Lire avant toute phase de lecture lourde (Étape 0.5) pour décider qui fait quoi.**
 

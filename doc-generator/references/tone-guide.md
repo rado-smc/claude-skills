@@ -1,176 +1,161 @@
-# tone-guide.md — Règles de style pour une doc lisible par tous
+# tone-guide.md — Voix et ton de la documentation (inspiré Stripe)
 
-Cette doc est lue par des gens qui ne codent pas : chefs de projet, clients, office managers, nouveaux arrivants. Elle est aussi lue par des devs qui ouvrent le repo pour la première fois.
-
-Ton objectif : qu'un non-tech comprenne `README.md`, `OVERVIEW.md`, `FEATURES.md` et n'importe quel `how-to/*.md` **sans rien demander à personne**. Les fichiers `reference/*` et `explanation/architecture.md` peuvent être plus techniques, mais gardent des phrases claires.
+Lis ce fichier **avant de rédiger le premier fichier de chaque session**. Il définit le ton, la structure et le vocabulaire de toute la documentation produite. Pour les patterns avancés (statuts, micro-patterns, anatomie des phrases), consulte `voice-patterns.md`.
 
 ---
 
-## Règle 0 — Français correct avec accents et caractères spéciaux
+## Règle 0 — Français correct obligatoire
 
-**Toute la documentation est écrite en français correct.** Les accents, cédilles, trémas et autres caractères spéciaux français sont **obligatoires**. Un fichier sans accents est considéré comme défectueux.
+Tous les accents, cédilles et trémas doivent être présents. Un fichier sans accents est défectueux.
 
-Exemples de fautes à ne jamais commettre :
+❌ `Derniere mise a jour` · `Deploye` · `Role` · `Cloturee` · `Securite`
+✅ `Dernière mise à jour` · `Déployé` · `Rôle` · `Clôturée` · `Sécurité`
 
-❌ `Derniere mise a jour` → ✅ `Dernière mise à jour`
-❌ `Fichiers crees` → ✅ `Fichiers créés`
-❌ `fidelement` → ✅ `fidèlement`
-❌ `Deploye en production` → ✅ `Déployé en production`
-❌ `Cloturee` → ✅ `Clôturée`
-❌ `Role` → ✅ `Rôle`
-❌ `Systeme` → ✅ `Système`
-❌ `Regle` → ✅ `Règle`
-❌ `Securite` → ✅ `Sécurité`
-❌ `A quoi ca sert` → ✅ `À quoi ça sert`
-
-Cette règle s'applique partout : titres, corps de texte, tableaux, rapports de fin de run, commentaires HTML. Les seules exceptions sont les noms de variables, les chemins de fichiers, et les blocs de code — ceux-là restent en ASCII.
+Exceptions : noms de variables, chemins de fichiers et blocs de code restent en ASCII.
 
 ---
 
-## Règle 1 — Phrases courtes
+## Règle 1 — Une phrase = une information
 
-Une idée par phrase. Maximum 20 mots. Si tu sens que ta phrase est longue, coupe-la en deux.
+Jamais deux concepts dans la même phrase. Si une phrase contient deux verbes d'action distincts, coupe-la en deux.
 
-❌ "Le système de validation, qui a été mis en place lors de la feature F4 afin de garantir que les timesheets ne soient pas modifiables une fois qu'elles sont passées en statut approuvé et rattachées à une facture, utilise une combinaison de RLS Postgres et de vérifications applicatives côté serveur."
+❌ "Confirmez l'arrêté, ce qui le verrouille et envoie une notification au client."
+✅ "Confirmez l'arrêté. Il est verrouillé et le client reçoit une notification."
 
-✅ "Une fois une timesheet validée et facturée, elle ne peut plus être modifiée. Cette règle est vérifiée à deux endroits : dans la base de données, et dans le code serveur. Les deux couches protègent la même règle."
-
----
-
-## Règle 2 — Vocabulaire concret
-
-Préfère les mots du quotidien quand c'est possible. Le jargon technique n'arrive que quand il est indispensable, et il est défini à sa première apparition dans le fichier.
-
-❌ "Le middleware d'authentification intercepte la requête et populate le contexte RLS."
-✅ "Avant d'afficher la page, le système vérifie qui tu es. Cette vérification sert à filtrer ce que tu as le droit de voir."
+**Longueurs cibles** : titre de section 2-4 mots · instruction numérotée 8-14 mots · phrase d'intro de section 12-18 mots · phrase explicative 15-22 mots max.
 
 ---
 
-## Règle 3 — Définir avant d'utiliser
+## Règle 2 — Le titre de section = une action
 
-Si un terme technique OU un mot savant apparaît pour la **première fois** dans un fichier, définis-le en **une courte phrase entre parenthèses**, dès son apparition. Cette règle vaut aussi pour les fichiers techniques — pas seulement pour les fichiers non-tech.
+Titre toujours avec un verbe. Jamais un sujet ou un nom abstrait.
 
-Les mots à surveiller en priorité :
-- Le jargon technique : RLS, JWT, RPC, RPC, middleware, hook, runtime, edge, etc.
-- Les mots "savants" qu'on croit universels mais qu'un non-initié ne comprend pas : transversal, nominal, idempotent, atomique, rollback, upsert, cascade, etc.
-- Les abréviations projet : TJM, OM, RH, etc. (même si elles figurent dans le glossaire, rappelle-les à la première apparition du fichier).
-
-✅ "La feature utilise les RLS (Row-Level Security : un système qui filtre automatiquement les lignes visibles selon qui lit la table)."
-
-✅ "Dans le cas nominal (déroulement normal sans erreur), le traitement prend 2 secondes."
-
-✅ "Ces observations transversales (valables pour tous les agents, pas juste un seul) aident à améliorer le flow."
-
-❌ "Le traitement est atomique." (mot savant laissé seul — un non-initié ne sait pas)
-✅ "Le traitement est atomique (soit tout réussit, soit rien n'est enregistré)."
-
-Si le terme est déjà défini dans le glossaire (`OVERVIEW.md` ou config projet), mets un lien plutôt que la définition pleine.
-
-## Règle 3-bis — Deux mots valent mieux qu'un mot savant
-
-Quand un mot technique peut être remplacé par deux ou trois mots simples, préfère les deux mots simples.
-
-| Mot savant ou jargon | À remplacer par |
-|---|---|
-| nominal | "cas normal", "déroulement sans erreur" |
-| transversal | "qu'on retrouve partout", "commun à tous" |
-| canonique | "la bonne version", "la version officielle" |
-| déclencheur | "ce qui fait démarrer" |
-| idempotent | "qu'on peut relancer sans risque" |
-| orchestration | "la mise en musique", "la coordination" |
-| intrinsèque | "qui vient de l'objet lui-même" |
-| agnostique | "qui fonctionne avec n'importe quel..." |
-| mutualisé | "partagé entre plusieurs" |
-| pertinent | "utile ici" |
-| ADR (Architecture Decision Record) | "fiche de décision" (note qui explique une décision technique importante et pourquoi elle a été prise) |
-| append-only | "mode *ajout seul*" (on ajoute à la fin, on n'efface jamais le passé) |
-| fallback | "solution de secours" (ce que le système fait quand la première option n'est pas possible) |
-| drift | "écart" (quand l'état réel ne correspond plus à ce qui était prévu) |
-| pipeline | "chaîne de traitement" (les étapes qu'un élément traverse de bout en bout) |
-| edge case | "cas limite" (une situation rare ou inhabituelle à laquelle il faut penser) |
-| runtime | "environnement d'exécution" (le programme qui fait tourner ton code) |
-| frontmatter | "en-tête de fichier" (le petit bloc tout en haut du fichier, entre `---` et `---`) |
-| bootstrap | "démarrage minimal" (se lancer quand on n'a presque rien d'existant) |
-| cache | "mémoire rapide" (un endroit où on garde un résultat sous la main pour ne pas le recalculer) |
-| middleware | "intermédiaire" (un petit bout de code qui s'exécute avant ou après une requête) |
-| atomique | "tout-ou-rien" (soit tout réussit, soit rien n'est enregistré) |
-| rollback | "retour en arrière" (annuler une modification pour revenir à l'état précédent) |
-| upsert | "insérer ou mettre à jour" (crée si absent, modifie si présent) |
-| cascade | "en chaîne" (quand une action en déclenche d'autres automatiquement) |
+❌ "Gestion des arrêtés" · "Cycle de facturation"
+✅ "Créer un arrêté" · "Confirmer un arrêté" · "Exporter un arrêté"
 
 ---
 
-## Règle 4 — Pas de "nous", pas de "on", pas de "je"
+## Règle 3 — La première phrase dit ce que ça fait et pour qui
 
-La doc parle de l'app et de ses comportements, pas de l'équipe qui l'a construite. Reste neutre.
+Chaque section ouvre avec une phrase qui donne le contexte + l'audience en une ligne. Le lecteur sait en 5 secondes si la section le concerne.
 
-❌ "Nous avons décidé de stocker les mots de passe hashés."
-✅ "Les mots de passe sont stockés hashés."
-
-❌ "On utilise Supabase pour la base de données."
-✅ "La base de données est hébergée sur Supabase."
+✅ "Créez et gérez les arrêtés de facturation pour vos clients."
+❌ "Cette section décrit le fonctionnement du module de facturation."
 
 ---
 
-## Règle 5 — Actions, pas états
+## Règle 4 — Les définitions sont intégrées, jamais renvoyées
 
-Décris ce que fait l'utilisateur et ce que fait le système — pas l'état interne de la machine.
+Quand un terme apparaît pour la première fois, définis-le entre parenthèses sur place. Jamais "voir glossaire" ou "défini en section X".
 
-❌ "Le composant Container contient un useState qui maintient l'état local du formulaire."
-✅ "Quand tu remplis le formulaire, le système garde ce que tu tapes jusqu'à ce que tu cliques sur Enregistrer."
+✅ "Confirmez l'*arrêté* (récapitulatif mensuel verrouillé une fois confirmé)."
+❌ "Confirmez l'arrêté (voir Glossaire pour la définition)."
 
----
-
-## Règle 6 — Exemples concrets plutôt qu'abstraits
-
-Quand tu décris un comportement, donne un exemple réel avec des noms, des chiffres, des dates. Un exemple vaut trois phrases d'explication.
-
-❌ "L'utilisateur peut filtrer les timesheets par période."
-✅ "Exemple : Marie veut voir ses heures de mars 2026. Elle sélectionne le mois dans le filtre, et seules les timesheets de mars s'affichent."
+3 usages distincts des parenthèses (ne jamais mélanger) :
+1. **Définition** : *arrêté* (récapitulatif mensuel verrouillé)
+2. **Option** : Confirmez (ou utilisez l'API)
+3. **Exemple** : choisissez une devise (par exemple, EUR)
 
 ---
 
-## Règle 7 — Pas de futur indéfini
+## Règle 5 — Nommer les états définitifs et ce qui ne se passe pas
 
-Dans un `how-to/*`, décris le comportement **actuel** de la feature livrée, pas ce qui viendra plus tard. Les évolutions prévues vont dans `FEATURES.md` colonne "⏳ À venir".
+**États définitifs** : quand une action est irréversible, le dire explicitement.
 
-❌ "Plus tard, on ajoutera un export PDF."
-✅ (dans `FEATURES.md`) "⏳ Export PDF des timesheets — P2"
+✅ "Un arrêté confirmé est verrouillé. C'est un état définitif — il ne peut plus être modifié."
 
----
+**Ce qui ne se passe pas** : documenter aussi les comportements non-automatiques.
 
-## Règle 8 — Signale les pièges
+✅ "Supprimer un brouillon ne notifie pas le client."
+❌ "Supprimez le brouillon depuis la liste."
 
-Quand un comportement peut surprendre, dis-le explicitement. Mieux vaut un paragraphe "Attention" de trois lignes qu'une heure de confusion chez le lecteur.
+**Contrainte bloquée + alternative** : quand une action est impossible, proposer immédiatement une alternative.
 
-✅ "**Attention** : une fois une facture envoyée au client, elle ne peut plus être supprimée. Seule la création d'un avoir permet de la corriger."
-
----
-
-## Règle 9 — Évite les tournures passives complexes
-
-La voix active est plus directe. La voix passive est tolérée quand elle rend la phrase plus naturelle, mais jamais enchaînée sur 2 propositions.
-
-❌ "Une fois que la timesheet a été approuvée et qu'elle a été rattachée à une facture, elle est verrouillée."
-✅ "Quand la timesheet est approuvée et facturée, elle se verrouille."
+✅ "Vous ne pouvez pas modifier un arrêté confirmé. Pour corriger une erreur : créez un avoir."
 
 ---
 
-## Règle 10 — Ne copie jamais de code long
+## Règle 6 — "Si X, alors Y" pour chaque exception
 
-Un bloc de code de 30 lignes n'est pas de la doc. Extrais ce qui compte (signature, colonnes, types) et renvoie vers le fichier source.
+Lister les cas alternatifs avec une structure conditionnelle explicite. Ne jamais laisser implicite.
 
-❌ Coller 40 lignes de SQL d'une migration.
-✅ "La table `timesheets` est créée par la migration `[nom-fichier.sql]`. Colonnes principales : `id`, `employee_id`, `month`, `status`, `invoice_id`."
+```
+Si le paiement échoue → [action à prendre].
+Si le client ne répond pas → [action à prendre].
+Si l'arrêté est déjà confirmé → [action à prendre].
+```
 
 ---
 
-## Check rapide avant de valider un fichier
+## Règle 7 — Tableaux dès 3 propriétés, "Par défaut" avant les options
 
-Avant de passer au fichier suivant, relis ce que tu viens d'écrire et pose-toi ces trois questions :
+**Tableaux > listes** quand il y a 3+ éléments avec plusieurs dimensions (statut/description/actions).
 
-1. Est-ce qu'un office manager qui n'a jamais ouvert VS Code comprendrait tout ?
-2. Est-ce qu'il y a des phrases de plus de 25 mots ? (Si oui, coupe.)
-3. Est-ce qu'il y a un terme technique qui apparaît sans avoir été défini ou lié ?
+**"Par défaut"** : toujours indiquer le comportement par défaut avant de décrire les options.
 
-Si tu réponds "non" aux trois, le fichier est prêt. Sinon, corrige avant de continuer.
+✅ "Par défaut, un arrêté créé est en statut Brouillon. Vous pouvez le confirmer ou le supprimer."
+
+---
+
+## Règle 8 — Callouts structurés
+
+Format fixe, phrase courte :
+
+> **Attention** — [conséquence si ignoré]. [Alternative ou contact].
+
+> **Note** — [info utile non bloquante].
+
+---
+
+## Règle 9 — Chaque audience a son ton
+
+**Identifier l'audience cible AVANT d'écrire.** Chaque fichier cible UNE audience.
+
+| Audience | Ton | Ce qu'on évite | Fichiers concernés |
+|---|---|---|---|
+| **Dev** | Dense, technique, exemples de code d'abord | Aucune prise en main inutile | `reference/*`, `explanation/architecture.md`, `onboarding/README-dev.md` |
+| **Ops** (non-dev) | Orienté décision : "quand faire quoi". Conséquences explicitées. | Jargon dev, noms de tables | `how-to/*`, `FEATURES.md` |
+| **Client** | Ultra-court, max 3 étapes. Rassurant sur la confidentialité. | TJM, forfait, arrêté, RLS, hook, payload | `README.md`, `OVERVIEW.md`, portail |
+
+Si un concept doit être documenté pour deux audiences, créer deux sections séparées — jamais "pour tout le monde".
+
+---
+
+## Règle 10 — "Étapes suivantes" en fin de section
+
+Terminer chaque guide par 2-3 liens concrets vers les prochaines actions logiques. Jamais de lien générique "voir la doc complète".
+
+✅ `Étapes suivantes : [Confirmer l'arrêté](./confirmer-arrete.md) · [Exporter en PDF](./exporter.md)`
+
+---
+
+## Vocabulaire par audience
+
+| Terme technique | Ops / Client | Dev |
+|---|---|---|
+| RLS / row-level security | "droits d'accès" | RLS (conservé) |
+| migration / schema | "mise à jour de la structure" | migration (conservé) |
+| deploy / push en prod | "mettre en ligne" | deploy (conservé) |
+| trigger / hook | "déclencher automatiquement" | hook (conservé) |
+| payload / body | "données envoyées" | payload (conservé) |
+| draft / brouillon | "Brouillon" | draft (conservé) |
+| confirmed / locked | "Confirmé (verrouillé)" | confirmed (conservé) |
+| terminal state | "état définitif (irréversible)" | terminal state (conservé) |
+| arrêté (pour le client) | "récapitulatif mensuel" | arrêté (conservé) |
+| TJM (pour le client) | **ne jamais mentionner** | TJM (conservé, confidentiel CEO) |
+| webhook / event | "notification automatique" | webhook (conservé) |
+
+Le tableau complet des mots savants est dans `voice-patterns.md`.
+
+---
+
+## Check rapide avant validation
+
+1. L'audience cible est identifiée ?
+2. Chaque phrase contient une seule information ?
+3. Les titres sont des verbes d'action ?
+4. Les états définitifs sont nommés ?
+5. Les termes techniques sont définis entre parenthèses à leur première apparition ?
+6. Les accents sont tous présents ?
+
+Si un point échoue, corriger avant de continuer.
