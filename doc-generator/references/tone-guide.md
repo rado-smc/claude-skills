@@ -6,6 +6,27 @@ Ton objectif : qu'un non-tech comprenne `README.md`, `OVERVIEW.md`, `FEATURES.md
 
 ---
 
+## Règle 0 — Français correct avec accents et caractères spéciaux
+
+**Toute la documentation est écrite en français correct.** Les accents, cédilles, trémas et autres caractères spéciaux français sont **obligatoires**. Un fichier sans accents est considéré comme défectueux.
+
+Exemples de fautes à ne jamais commettre :
+
+❌ `Derniere mise a jour` → ✅ `Dernière mise à jour`
+❌ `Fichiers crees` → ✅ `Fichiers créés`
+❌ `fidelement` → ✅ `fidèlement`
+❌ `Deploye en production` → ✅ `Déployé en production`
+❌ `Cloturee` → ✅ `Clôturée`
+❌ `Role` → ✅ `Rôle`
+❌ `Systeme` → ✅ `Système`
+❌ `Regle` → ✅ `Règle`
+❌ `Securite` → ✅ `Sécurité`
+❌ `A quoi ca sert` → ✅ `À quoi ça sert`
+
+Cette règle s'applique partout : titres, corps de texte, tableaux, rapports de fin de run, commentaires HTML. Les seules exceptions sont les noms de variables, les chemins de fichiers, et les blocs de code — ceux-là restent en ASCII.
+
+---
+
 ## Règle 1 — Phrases courtes
 
 Une idée par phrase. Maximum 20 mots. Si tu sens que ta phrase est longue, coupe-la en deux.

@@ -244,8 +244,9 @@ Actions :
 
 ## Règles de rédaction (ton et forme)
 
-Lis `references/tone-guide.md` **avant de rédiger le premier fichier de la session**. C'est court (≈ 80 lignes) et ça contient les règles de style non-négociables :
+Lis `references/tone-guide.md` **avant de rédiger le premier fichier de la session**. C'est court (≈ 100 lignes) et ça contient les règles de style non-négociables :
 
+- **Français correct obligatoire** : tous les accents, cédilles, trémas et caractères spéciaux doivent être présents (é, è, ê, à, ù, ç, î, ô, etc.). Un fichier sans accents est défectueux. Exemple : `Dernière mise à jour`, jamais `Derniere mise a jour`. Seuls les noms de variables, chemins de fichiers et blocs de code restent en ASCII.
 - Phrases courtes
 - Vocabulaire simple, technique seulement quand c'est indispensable
 - Chaque terme technique est défini la première fois qu'il apparaît dans un fichier (ou renvoyé vers le glossaire)
