@@ -26,6 +26,12 @@ Généré par doc-generator au premier run, modifiable à la main.
 - **Description courte** : [une phrase — qui l'utilise, pour quoi faire]
 - **Public doc** : [qui lit la doc — ex : "PO, client final, nouveaux devs"]
 
+## Langue
+
+- **Langue** : [`français` | `anglais` | code ISO 639-1 comme `es`, `de`, `pt`, etc. | `auto` pour demander au skill de détecter depuis le README et les commits]
+
+Cette clé pilote la langue de **toute la documentation produite**. Le skill ne mélange jamais deux langues dans le même fichier. Pour un projet multi-langues, choisir la langue principale ; les éléments étrangers (extraits de commits anglais dans un projet français, par exemple) sont traduits ou paraphrasés au passage.
+
 ## Stack technique
 
 - **Frontend** : [framework + version — ex : Next.js 14 App Router]
@@ -135,6 +141,10 @@ Généré par doc-generator au premier run, modifiable à la main.
 - **Nom** : TeamBilling
 - **Description courte** : app interne de suivi du temps et de facturation pour des équipes externes.
 - **Public doc** : admin, manager, client final, nouveaux devs en onboarding.
+
+## Langue
+
+- **Langue** : `français`
 
 ## Stack technique
 

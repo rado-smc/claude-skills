@@ -51,7 +51,8 @@ Vérifie si le fichier existe à `.claude/skills/doc-generator/project-config.md
 **Si le fichier n'existe pas** → c'est un premier run. Tu dois :
 1. Lire `references/project-config.md` pour voir le format attendu
 2. Partir du JSON de détection pour pré-remplir tout ce qui est auto-détectable (stack, frameworks, sources, agents, migrations)
-3. Poser **maximum 5 questions ciblées** à l'humain pour ce qui n'est pas auto-détectable :
+3. Poser **maximum 6 questions ciblées** à l'humain pour ce qui n'est pas auto-détectable :
+   - **Langue de la doc** (français / anglais / autre). Propose une valeur par défaut déduite du `README.md` existant ou des 10 derniers commits. L'humain peut confirmer d'un simple « ok ». Stocke la réponse dans la clé `Langue` du `project-config.md`.
    - Rôles utilisateurs de l'application (ex : admin / user / guest, ou owner / staff / customer)
    - Entités métier principales (ex : Customer, Invoice, Order)
    - Informations confidentielles par rôle (ex : "le champ salary n'est visible que par les admins")
@@ -281,7 +282,7 @@ Actions :
 
 Lis `references/tone-guide.md` **avant de rédiger le premier fichier de la session**. C'est court (≈ 100 lignes) et ça contient les règles de style non-négociables :
 
-- **Français correct obligatoire** : tous les accents, cédilles, trémas et caractères spéciaux doivent être présents (é, è, ê, à, ù, ç, î, ô, etc.). Un fichier sans accents est défectueux. Exemple : `Dernière mise à jour`, jamais `Derniere mise a jour`. Seuls les noms de variables, chemins de fichiers et blocs de code restent en ASCII.
+- **Langue cohérente et correcte** : écris dans la langue déclarée à la clé `Langue` de `project-config.md` (voir Règle 0 du tone-guide). Si la langue cible est le français, tous les accents et cédilles doivent être présents. Jamais deux langues mélangées dans un même fichier.
 - Phrases courtes
 - Vocabulaire simple, technique seulement quand c'est indispensable
 - Chaque terme technique est défini la première fois qu'il apparaît dans un fichier (ou renvoyé vers le glossaire)
@@ -376,7 +377,7 @@ Le rapport doit faire 15 lignes max. Pas de blabla.
 - Toucher à `project-state.md`, `CONVENTIONS.md`, `DECISIONS.md`, ou aux specs
 - Dépasser 150 lignes dans un fichier sans le scinder
 - Utiliser du jargon inutile dans `README.md`, `OVERVIEW.md`, `FEATURES.md`, ou `how-to/*.md`
-- Écrire du français sans accents, sans cédilles ou avec des fautes d'orthographe/grammaire — chaque fichier doit être en **français correct** (voir Règle 0 du tone-guide). Un fichier avec des mots sans accents (`Derniere`, `Deploye`, `Cloturee`) est rejeté.
+- Mélanger deux langues dans un même fichier, ou écrire dans une langue différente de celle déclarée dans `project-config.md` (voir Règle 0 du tone-guide). Un fichier français sans accents (`Derniere`, `Deploye`, `Cloturee`) ou un fichier anglais truffé de franglais est rejeté.
 
 ---
 
