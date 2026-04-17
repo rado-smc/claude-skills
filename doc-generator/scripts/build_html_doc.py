@@ -66,7 +66,6 @@ SECTION_ORDER = [
 # Common generic entries are pre-populated; extend as your `docs/` grows.
 #
 SIDEBAR_TITLES = {
-    "readme": "Home",
     "overview": "Vue d'ensemble",
     "features": "Liste des features",
     "onboarding-readme-dev": "Installation locale",
@@ -156,6 +155,29 @@ def extract_title(content: str, filename: str) -> str:
     return name.strip().title()
 
 
+#
+# Redundant suffixes that clutter sidebar labels when the filename already
+# conveys the category. The sidebar sits inside a 'Fonctionnalités' section,
+# so a label like 'Export PDF — Guide' is repetitive; we strip the trailing
+# '— Guide' / '- Guide' / 'Guide' to keep the nav tidy.
+# Ordered from most specific to most generic.
+#
+REDUNDANT_TITLE_SUFFIXES = [
+    r"\s*[—–-]\s*Guide\s*$",
+    r"\s*[—–-]\s*Reference\s*$",
+    r"\s*[—–-]\s*Référence\s*$",
+    r"\s*[—–-]\s*Explanation\s*$",
+    r"\s*[—–-]\s*Explication\s*$",
+]
+
+
+def strip_redundant_suffix(title: str) -> str:
+    """Remove trailing ' — Guide' / ' — Reference' etc. from a sidebar title."""
+    for pattern in REDUNDANT_TITLE_SUFFIXES:
+        title = re.sub(pattern, "", title, flags=re.IGNORECASE)
+    return title.strip()
+
+
 def clean_sidebar_title(doc_id: str, raw_title: str) -> str:
     """Return a clean short title for the sidebar."""
     # Check explicit mapping first
@@ -165,14 +187,14 @@ def clean_sidebar_title(doc_id: str, raw_title: str) -> str:
     # Decision files: extract part after ":"
     decision_match = re.match(r"Fiche de decision \d+\s*:\s*(.+)", raw_title, re.I)
     if decision_match:
-        return decision_match.group(1).strip()
+        return strip_redundant_suffix(decision_match.group(1).strip())
 
     # Remove common prefixes
     for prefix in ["Reference --", "Schema --", "Guide --", "How-to --"]:
         if raw_title.startswith(prefix):
-            return raw_title[len(prefix):].strip()
+            return strip_redundant_suffix(raw_title[len(prefix):].strip())
 
-    return raw_title
+    return strip_redundant_suffix(raw_title)
 
 
 def determine_section(relative_path: str) -> str:
@@ -336,8 +358,11 @@ def scan_docs(docs_dir: Path, project_root: Path) -> list[dict]:
     # Sort by section order then by explicit slug order
     docs.sort(key=doc_sort_key)
 
-    # Exclude README.md from sidebar (we use __home__ instead)
-    # but keep it in DOC_DATA for search
+    # Drop README.md from the sidebar/search dataset — its content is the
+    # introductory landing that the generated home page already exposes via
+    # the popular cards, so keeping it would duplicate the entry point.
+    docs = [d for d in docs if d["id"] != "readme"]
+
     # Generate home page and prepend
     home = generate_home_page(docs)
     docs.insert(0, home)
