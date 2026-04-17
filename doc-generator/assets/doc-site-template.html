@@ -850,9 +850,9 @@ const GENERATED_DATE = "__GENERATED_DATE_PLACEHOLDER__";
 
 // ========== CONFIGURATION ==========
 const SECTION_ORDER = [
-  'Demarrer',
-  'Fonctionnalites',
-  'Reference',
+  'Démarrer',
+  'Fonctionnalités',
+  'Référence',
   'Architecture',
   'Decisions'
 ];
@@ -944,7 +944,7 @@ function buildSidebar() {
     // For Fonctionnalites section, add a separator before guides
     let addedGuideSep = false;
     items.forEach(doc => {
-      if (sectionName === 'Fonctionnalites' && !addedGuideSep && doc.id !== 'features') {
+      if (sectionName === 'Fonctionnalités' && !addedGuideSep && doc.id !== 'features') {
         html += `<div class="sidebar-guides-separator">Guides</div>`;
         addedGuideSep = true;
       }
@@ -987,9 +987,9 @@ function groupBySection(data) {
 
 function formatSectionName(name) {
   const map = {
-    'Demarrer': 'Demarrer',
-    'Fonctionnalites': 'Fonctionnalites',
-    'Reference': 'Reference',
+    'Démarrer': 'Démarrer',
+    'Fonctionnalités': 'Fonctionnalités',
+    'Référence': 'Référence',
     'Architecture': 'Architecture',
     'Decisions': 'Decisions'
   };
@@ -1172,11 +1172,11 @@ function renderMarkdown(content) {
 function rewriteInternalLinks() {
   // Directory paths → first doc in that section
   const DIR_TO_SECTION = {
-    'how-to': 'Fonctionnalites',
-    'reference': 'Reference',
+    'how-to': 'Fonctionnalités',
+    'reference': 'Référence',
     'reference/decisions': 'Decisions',
     'explanation': 'Architecture',
-    'onboarding': 'Demarrer',
+    'onboarding': 'Démarrer',
   };
 
   document.querySelectorAll('.md-content a[href]').forEach(link => {

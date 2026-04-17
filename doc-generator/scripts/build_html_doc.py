@@ -21,24 +21,24 @@ from pathlib import Path
 
 FOLDER_TO_SECTION = {
     ".": "Accueil",
-    "how-to": "Fonctionnalites",
-    "reference": "Reference",
+    "how-to": "Fonctionnalités",
+    "reference": "Référence",
     "reference/decisions": "Decisions",
     "explanation": "Architecture",
-    "onboarding": "Demarrer",
+    "onboarding": "Démarrer",
 }
 
 # Patterns used to assign section when folder mapping alone is not enough
 FILENAME_SECTION_PATTERNS = [
     # Demarrer
-    (re.compile(r"^README-dev", re.I), "Demarrer"),
-    (re.compile(r"^OVERVIEW", re.I), "Demarrer"),
+    (re.compile(r"^README-dev", re.I), "Démarrer"),
+    (re.compile(r"^OVERVIEW", re.I), "Démarrer"),
     # Fonctionnalites
-    (re.compile(r"^FEATURES", re.I), "Fonctionnalites"),
+    (re.compile(r"^FEATURES", re.I), "Fonctionnalités"),
     # Reference
-    (re.compile(r"^schema", re.I), "Reference"),
-    (re.compile(r"^roles", re.I), "Reference"),
-    (re.compile(r"^conventions", re.I), "Reference"),
+    (re.compile(r"^schema", re.I), "Référence"),
+    (re.compile(r"^roles", re.I), "Référence"),
+    (re.compile(r"^conventions", re.I), "Référence"),
     # Architecture
     (re.compile(r"^architecture", re.I), "Architecture"),
     (re.compile(r"^agents?-architecture", re.I), "Architecture"),
@@ -50,9 +50,9 @@ FILENAME_SECTION_PATTERNS = [
 
 SECTION_ORDER = [
     "__home__",
-    "Demarrer",
-    "Fonctionnalites",
-    "Reference",
+    "Démarrer",
+    "Fonctionnalités",
+    "Référence",
     "Architecture",
     "Decisions",
 ]
@@ -108,26 +108,26 @@ SLUG_ORDER = {
 HOME_POPULAR_CARDS = [
     {
         "emoji": "&#128203;",  # clipboard
-        "title": "Demarrer",
+        "title": "Démarrer",
         "desc": "Setup local et premiers pas",
         "target": "overview",
     },
     {
         "emoji": "&#128640;",  # rocket
         "title": "Features",
-        "desc": "Ce qui est livre et en cours",
+        "desc": "Ce qui est livré et en cours",
         "target": "features",
     },
     {
         "emoji": "&#128295;",  # wrench
-        "title": "Reference",
-        "desc": "Schema DB, roles, conventions",
+        "title": "Référence",
+        "desc": "Schéma DB, rôles, conventions",
         "target": "reference-schema",
     },
     {
         "emoji": "&#128101;",  # people
         "title": "Architecture",
-        "desc": "Comment le systeme est construit",
+        "desc": "Comment le système est construit",
         "target": "explanation-architecture",
     },
 ]
@@ -199,7 +199,7 @@ def determine_section(relative_path: str) -> str:
 
     # Root-level files default to Demarrer
     if len(parts) == 1:
-        return "Demarrer"
+        return "Démarrer"
 
     return "Autre"
 
@@ -239,7 +239,7 @@ def generate_home_page(docs: list[dict]) -> dict:
     # Collect how-to guides for the feature grid
     guide_cards = []
     for doc in docs:
-        if doc["section"] == "Fonctionnalites" and doc["id"] != "features":
+        if doc["section"] == "Fonctionnalités" and doc["id"] != "features":
             guide_cards.append({
                 "title": doc["sidebarTitle"],
                 "target": doc["id"],
@@ -263,14 +263,50 @@ def generate_home_page(docs: list[dict]) -> dict:
 
 # ── Main logic ───────────────────────────────────────────────────────────────
 
+#
+# Canonical top-level folders produced by the skill. Files at the root of
+# docs/ are always included (README, OVERVIEW, FEATURES...). Subfolders are
+# only included if they match one of these names — this keeps foreign
+# directories (e.g. docs/superpowers/, docs/screenshots/, docs/archive/,
+# notes written by other tools) out of the generated site.
+# Extend ALLOWED_SUBDIRS below if your project uses extra canonical folders.
+#
+ALLOWED_SUBDIRS = {"how-to", "reference", "reference/decisions", "explanation", "onboarding"}
+
+
+def is_allowed_file(md_file: Path, docs_dir: Path) -> bool:
+    """Return True when md_file belongs to the canonical doc structure."""
+    try:
+        rel = md_file.relative_to(docs_dir)
+    except ValueError:
+        return False
+    # Root-level Markdown files are always included
+    if len(rel.parts) == 1:
+        return True
+    # Nested files must live under an allowed subdir
+    for depth in range(1, len(rel.parts)):
+        candidate = "/".join(rel.parts[:depth])
+        if candidate in ALLOWED_SUBDIRS:
+            return True
+    return False
+
+
 def scan_docs(docs_dir: Path, project_root: Path) -> list[dict]:
-    """Scan docs_dir recursively for .md files and build DOC_DATA."""
+    """Scan docs_dir for .md files and build DOC_DATA.
+
+    Only files living at the docs_dir root or under an ALLOWED_SUBDIRS folder
+    are included. This avoids pulling in unrelated Markdown left under docs/
+    by other tools or workflows.
+    """
     docs = []
     exclude_dirs = {"_bundle", "node_modules", ".git"}
 
     for md_file in sorted(docs_dir.rglob("*.md")):
         # Skip excluded directories
         if any(part in exclude_dirs for part in md_file.parts):
+            continue
+        # Skip foreign subdirectories not produced by the skill
+        if not is_allowed_file(md_file, docs_dir):
             continue
 
         # Relative path from docs_dir (for section mapping)
