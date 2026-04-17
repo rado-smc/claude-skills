@@ -240,12 +240,12 @@ Si le fichier dépasse 150 lignes, scinde par domaine fonctionnel : `schema-user
 
 ## Matrice des permissions
 
-| Ressource | CEO | OM | RH | Employee | Client |
+| Ressource | admin | manager | hr-lead | employee | customer |
 |---|---|---|---|---|---|
 | [Ressource 1] | ✅ RW | ✅ R | ✅ R | ❌ | ❌ |
 | ... | | | | | |
 
-**Légende** : ✅ RW = lecture + écriture, ✅ R = lecture seule, ❌ = aucun accès.
+**Légende** : ✅ RW = lecture + écriture, ✅ R = lecture seule, ❌ = aucun accès. Adapter les colonnes aux rôles réels du projet (cf. `project-config.md`).
 
 ## Détails par rôle
 
@@ -254,7 +254,7 @@ Si le fichier dépasse 150 lignes, scinde par domaine fonctionnel : `schema-user
 
 ## Confidentialités spéciales
 
-- [ex : Le TJM est visible uniquement par CEO et par le client concerné. Masqué partout ailleurs, y compris dans les logs applicatifs.]
+- [ex : Le champ `hourly_rate` est visible uniquement par l'admin et par le client concerné. Masqué partout ailleurs, y compris dans les logs applicatifs.]
 ```
 
 ---

@@ -59,74 +59,48 @@ SECTION_ORDER = [
 
 # ── Sidebar titles: slug -> clean short title ────────────────────────────────
 
+#
+# Override any of the slug -> title mappings for your project.
+# If a slug is not listed here, the script derives the title from the
+# first heading of the Markdown file (falling back to a humanised slug).
+# Common generic entries are pre-populated; extend as your `docs/` grows.
+#
 SIDEBAR_TITLES = {
-    "readme": "ScaleERP",
+    "readme": "Home",
     "overview": "Vue d'ensemble",
     "features": "Liste des features",
     "onboarding-readme-dev": "Installation locale",
-    # How-to guides
-    "how-to-f1-auth-guide": "Authentification",
-    "how-to-f2-referentiel-guide": "Referentiel",
-    "how-to-f2-bis-tjm-guide": "Gestion du TJM",
-    "how-to-f3-grille-guide": "Feuilles de temps",
-    "how-to-f3-multi-guide": "Selection multi-dates",
-    "how-to-f4-validation-guide": "Validation",
-    "how-to-f5-factures-guide": "Facturation",
-    "how-to-f7-invoice-guide": "Detail facture",
-    "how-to-f-releves-guide": "Releves mensuels",
-    "how-to-f-dashboard-flow-guide": "Dashboard validation",
-    "how-to-f8-modification-guide": "Demande de modification",
-    "how-to-f11-portal-home-guide": "Portail client",
-    "how-to-f12-invite-email-guide": "Invitation par email",
     # Reference
-    "reference-schema": "Schema de la base",
-    "reference-schema-users": "Utilisateurs",
-    "reference-schema-billing": "Facturation",
-    "reference-schema-timesheets": "Feuilles de temps",
-    "reference-schema-email": "Invitations email",
-    "reference-roles": "Roles et permissions",
+    "reference-schema": "Schéma de la base",
+    "reference-roles": "Rôles et permissions",
     "reference-conventions": "Conventions de code",
     # Architecture
     "explanation-architecture": "Vue technique",
-    "explanation-agents-architecture": "Equipe des agents",
-    "explanation-agent-retex": "Retour d'experience",
-    "explanation-billing-logic": "Logique de facturation",
+    "explanation-agents-architecture": "Équipe des agents",
+    "explanation-agent-retex": "Retour d'expérience",
 }
 
 # ── Explicit ordering within sections ────────────────────────────────────────
 
+#
+# Override display order for specific slugs. Lower numbers come first
+# inside their section. Any slug not listed is sorted alphabetically
+# after the explicit entries of the same section.
+#
 SLUG_ORDER = {
-    # Demarrer
+    # Démarrer
     "overview": 0,
     "onboarding-readme-dev": 1,
-    # Fonctionnalites
+    # Fonctionnalités
     "features": 0,
-    "how-to-f1-auth-guide": 10,
-    "how-to-f2-referentiel-guide": 11,
-    "how-to-f2-bis-tjm-guide": 12,
-    "how-to-f3-grille-guide": 13,
-    "how-to-f3-multi-guide": 14,
-    "how-to-f4-validation-guide": 15,
-    "how-to-f5-factures-guide": 16,
-    "how-to-f7-invoice-guide": 17,
-    "how-to-f-releves-guide": 18,
-    "how-to-f-dashboard-flow-guide": 19,
-    "how-to-f8-modification-guide": 20,
-    "how-to-f11-portal-home-guide": 21,
-    "how-to-f12-invite-email-guide": 22,
-    # Reference
+    # Référence
     "reference-schema": 0,
-    "reference-schema-users": 1,
-    "reference-schema-billing": 2,
-    "reference-schema-timesheets": 3,
-    "reference-schema-email": 4,
-    "reference-roles": 5,
-    "reference-conventions": 6,
+    "reference-roles": 1,
+    "reference-conventions": 2,
     # Architecture
     "explanation-architecture": 0,
     "explanation-agents-architecture": 1,
     "explanation-agent-retex": 2,
-    "explanation-billing-logic": 3,
 }
 
 # ── Home page card definitions ───────────────────────────────────────────────

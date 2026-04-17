@@ -89,7 +89,7 @@ Justifier une fonctionnalité en termes de ce que l'utilisateur peut faire, pas 
 
 Ce que le système ne fait PAS est aussi important que ce qu'il fait.
 
-✅ "Par défaut, ScaleERP ne notifie pas le client quand un brouillon est créé. La notification est envoyée uniquement à la confirmation."
+✅ "Par défaut, l'application ne notifie pas le client quand un brouillon est créé. La notification est envoyée uniquement à la confirmation."
 
 ### "En savoir plus" — court et ciblé
 

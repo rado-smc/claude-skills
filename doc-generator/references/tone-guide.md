@@ -115,7 +115,7 @@ Format fixe, phrase courte :
 |---|---|---|---|
 | **Dev** | Dense, technique, exemples de code d'abord | Aucune prise en main inutile | `reference/*`, `explanation/architecture.md`, `onboarding/README-dev.md` |
 | **Ops** (non-dev) | Orienté décision : "quand faire quoi". Conséquences explicitées. | Jargon dev, noms de tables | `how-to/*`, `FEATURES.md` |
-| **Client** | Ultra-court, max 3 étapes. Rassurant sur la confidentialité. | TJM, forfait, arrêté, RLS, hook, payload | `README.md`, `OVERVIEW.md`, portail |
+| **Client** | Ultra-court, max 3 étapes. Rassurant sur la confidentialité. | tarifs internes, acronymes métier, jargon technique (RLS, hook, payload) | `README.md`, `OVERVIEW.md`, portail |
 
 Si un concept doit être documenté pour deux audiences, créer deux sections séparées — jamais "pour tout le monde".
 
@@ -142,7 +142,7 @@ Terminer chaque guide par 2-3 liens concrets vers les prochaines actions logique
 | confirmed / locked | "Confirmé (verrouillé)" | confirmed (conservé) |
 | terminal state | "état définitif (irréversible)" | terminal state (conservé) |
 | arrêté (pour le client) | "récapitulatif mensuel" | arrêté (conservé) |
-| TJM (pour le client) | **ne jamais mentionner** | TJM (conservé, confidentiel CEO) |
+| tarif interne confidentiel (pour le client) | **ne jamais mentionner** | tarif / rate (conservé, accès restreint à l'admin) |
 | webhook / event | "notification automatique" | webhook (conservé) |
 
 Le tableau complet des mots savants est dans `voice-patterns.md`.

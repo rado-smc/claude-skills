@@ -1,6 +1,6 @@
 # portability.md — Matrice de portabilité
 
-Ce fichier décrit **exactement ce que le skill produit en fonction des sources présentes** dans le projet. Le skill est conçu pour fonctionner sur n'importe quel projet, du plus nu (juste `package.json` et `README.md`) au plus riche (ScaleERP avec agents, sessions, features, décisions).
+Ce fichier décrit **exactement ce que le skill produit en fonction des sources présentes** dans le projet. Le skill est conçu pour fonctionner sur n'importe quel projet, du plus nu (juste `package.json` et `README.md`) au plus riche (projet mature avec agents, sessions, features, décisions).
 
 Règle d'or : **aucun fichier de sortie n'est produit s'il n'a pas au moins une source pour le nourrir.** Pas de doc inventée.
 
@@ -101,7 +101,7 @@ Déclenché quand il y a au moins : `package.json` + `README.md` + soit `feature
 
 Produit la plupart des fichiers de la matrice sauf ceux liés aux agents (pas de `.claude/agents/`) et ceux qui manquent de source spécifique.
 
-### Mode « enrichi » (projet ScaleERP-like)
+### Mode « enrichi » (projet mature)
 
 Tous les signaux sont présents : agents, sessions, features, décisions, rôles, RLS, retex. Le skill produit l'intégralité de l'arbo décrite dans `SKILL.md`.
 

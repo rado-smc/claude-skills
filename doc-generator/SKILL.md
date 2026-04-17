@@ -52,9 +52,9 @@ Vérifie si le fichier existe à `.claude/skills/doc-generator/project-config.md
 1. Lire `references/project-config.md` pour voir le format attendu
 2. Partir du JSON de détection pour pré-remplir tout ce qui est auto-détectable (stack, frameworks, sources, agents, migrations)
 3. Poser **maximum 5 questions ciblées** à l'humain pour ce qui n'est pas auto-détectable :
-   - Rôles utilisateurs de l'application (ex : admin / user / guest, ou CEO / OM / client)
-   - Entités métier principales (ex : Client, Invoice, Order)
-   - Informations confidentielles par rôle (ex : "le salaire n'est visible que par RH")
+   - Rôles utilisateurs de l'application (ex : admin / user / guest, ou owner / staff / customer)
+   - Entités métier principales (ex : Customer, Invoice, Order)
+   - Informations confidentielles par rôle (ex : "le champ salary n'est visible que par les admins")
    - Glossaire court (3 à 5 termes métier)
    - Décisions sur les modèles des agents (Opus/Sonnet/Haiku) — **seulement si** la détection a trouvé des agents ET qu'aucun modèle n'est spécifié dans leur frontmatter
 4. Génère `.claude/skills/doc-generator/project-config.md` avec les réponses. Marque explicitement les sections vides en `(aucune détectée)` au lieu de les omettre — ça permet le drift check au prochain run.
@@ -82,7 +82,7 @@ Selon ce que la détection a trouvé, tu appliques l'un des trois modes décrits
 |---|---|---|
 | **Bootstrap minimal** | Aucune source métier, aucun agent, aucun `features/` | Produit 4 à 5 fichiers : README, OVERVIEW, explanation/architecture, onboarding/README-dev, project-config |
 | **Standard** | Au moins stack + `README.md` + (features OU CHANGELOG structuré OU docs/) | Produit la plupart des fichiers de la matrice, sauf agents-related si pas d'agents |
-| **Enrichi** | Toutes les sources présentes (ScaleERP-like) | Produit l'intégralité de l'arbo |
+| **Enrichi** | Toutes les sources présentes (projet mature multi-agents) | Produit l'intégralité de l'arbo |
 
 Une fois le mode identifié et la config chargée, passe à l'exécution du mode demandé (`generate`, `update`, `schema`, `bundle`).
 
@@ -154,7 +154,7 @@ Si l'argument est absent ou ambigu, demande à l'utilisateur lequel il veut avan
 Sources à lire dans cet ordre (toutes, sans exception) :
 
 1. **Config projet** : `.claude/skills/doc-generator/project-config.md` (déjà chargée Étape 0)
-2. **État global** : le fichier d'état du projet (paramétré dans la config — pour ScaleERP c'est `project-state.md`)
+2. **État global** : le fichier d'état du projet (paramétré dans la config — couramment `project-state.md`, `STATUS.md` ou équivalent)
 3. **Features actives et terminées** : tous les fichiers dans le dossier features (paramétré), y compris les specs `*-spec.md`
 4. **Migrations DB** : toutes les migrations, dans l'ordre chronologique (nom de fichier)
 5. **Conventions et décisions** : `CONVENTIONS.md`, `DECISIONS.md`, `RETOUR-EXPERIENCE-AGENTS.md`, `TODO.md` si présents
@@ -359,7 +359,7 @@ Sources ignorées / infos manquantes :
 - [source] : [raison — ex : "feature f-truc mentionnée dans project-state mais pas de fichier spec"]
 
 Suggestions humaines :
-- [si applicable — ex : "le rôle 'RH' n'apparaît dans aucune spec mais existe dans project-config — à confirmer"]
+- [si applicable — ex : "le rôle 'admin' n'apparaît dans aucune spec mais existe dans project-config — à confirmer"]
 ```
 
 Le rapport doit faire 15 lignes max. Pas de blabla.
@@ -382,7 +382,7 @@ Le rapport doit faire 15 lignes max. Pas de blabla.
 
 ## Fichiers de référence bundlés
 
-- `references/project-config.md` — format de config projet + exemple ScaleERP pré-rempli. **Lire quand tu crées la config au premier run.**
+- `references/project-config.md` — format de config projet + exemple pré-rempli (TeamBilling). **Lire quand tu crées la config au premier run.**
 - `references/formats.md` — templates exacts de chaque fichier de doc produit. **Lire avant d'écrire le premier fichier du mode.**
 - `references/tone-guide.md` — voix et ton de la documentation (inspiré Stripe) : 10 règles, audiences, vocabulaire par rôle. **Lire avant la première rédaction de la session.**
 - `references/voice-patterns.md` — patterns avancés : anatomie des instructions, documentation des statuts et cycles de vie, micro-patterns linguistiques. **Lire avant d'écrire des `how-to/*` ou des sections de `reference/*` qui documentent des statuts.**

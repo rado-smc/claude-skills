@@ -115,64 +115,64 @@ Format :
 
 Tout ce qui n'entre pas dans les cases ci-dessus mais doit influencer la rédaction.
 
-- [règle] — exemple : "Le TJM est une information strictement confidentielle. Ne jamais l'exposer dans la doc de rôle autre que CEO + client concerné."
+- [règle] — exemple : "Le champ `hourly_rate` est strictement confidentiel. Ne jamais l'exposer dans la doc visible par un rôle autre qu'admin ou le client concerné."
 ```
 
 ---
 
-## Exemple pré-rempli — ScaleERP
+## Exemple pré-rempli — TeamBilling (projet fictif)
 
-Voici un exemple réel pour le projet ScaleERP (ScaleMyCrew). Si tu génères la config pour ScaleERP, tu peux partir de cette base.
+Voici un exemple générique pour un projet fictif nommé **TeamBilling** : une app interne qui fait du suivi du temps (timesheets) et de la facturation pour des équipes externes. Remplace chaque bloc par ton contexte réel.
 
 ```markdown
-# Project Config — ScaleERP
+# Project Config — TeamBilling
 
-Dernière mise à jour : 2026-04-15
+Dernière mise à jour : YYYY-MM-DD
 Généré par doc-generator au premier run, modifiable à la main.
 
 ## Identité
 
-- **Nom** : ScaleERP (ScaleMyCrew)
-- **Description courte** : ERP interne de gestion facturation et timesheets pour une société de prestation de services techniques.
-- **Public doc** : CEO, PO, Office Manager, client final, nouveaux devs en onboarding.
+- **Nom** : TeamBilling
+- **Description courte** : app interne de suivi du temps et de facturation pour des équipes externes.
+- **Public doc** : admin, manager, client final, nouveaux devs en onboarding.
 
 ## Stack technique
 
-- **Frontend** : Next.js 14 (App Router), TypeScript strict
-- **Backend / DB** : Supabase (Postgres + Auth + Row-Level Security)
-- **Styling** : Tailwind CSS + shadcn/ui
-- **Deploy** : Cloudflare Pages (main → prod, dev → staging)
-- **Migrations** : fichiers SQL dans `supabase/migrations/` (source de vérité)
+- **Frontend** : Next.js (App Router), TypeScript strict
+- **Backend / DB** : Postgres + Row-Level Security
+- **Styling** : Tailwind CSS
+- **Deploy** : plateforme edge (main → prod, dev → staging)
+- **Migrations** : fichiers SQL dans `db/migrations/` (source de vérité)
 
 ## Rôles utilisateurs
 
-- **CEO** : dirigeant — peut tout voir et tout faire — voit les TJM de tous les clients.
-- **OM (Office Manager)** : gestion opérationnelle — valide les timesheets, crée factures — ne voit pas les TJM.
-- **RH** : ressources humaines — droits équivalents OM + vue matricielle absences — ne voit pas les TJM.
-- **Employee** : prestataire — saisit ses propres timesheets — ne voit ni les factures ni les TJM.
-- **Client** : client final — voit ses employés, ses factures, son portail — voit son propre TJM, pas celui des autres.
+- **admin** : direction / support interne — peut tout voir et tout faire — voit les tarifs de tous les clients.
+- **manager** : gestion opérationnelle — valide les timesheets, émet les factures — ne voit pas les tarifs.
+- **hr-lead** : ressources humaines — droits équivalents manager + vue des absences — ne voit pas les tarifs.
+- **employee** : collaborateur — saisit ses propres timesheets — ne voit ni les factures ni les tarifs.
+- **customer** : client final — voit ses propres collaborateurs, ses factures, son portail — voit son propre tarif, pas ceux des autres clients.
 
 ## Entités métier principales
 
-- **Employee** : un prestataire qui travaille pour un ou plusieurs clients.
-- **Client** : une société qui fait appel à ScaleMyCrew.
-- **Assignment** : le lien entre un Employee et un Client (qui travaille pour qui, à partir de quand).
-- **TJM (Taux Journalier Moyen)** : le prix journalier d'un Employee chez un Client. Donnée confidentielle.
-- **Timesheet** : la feuille de temps d'un Employee pour un mois donné chez un Client.
-- **Invoice** : une facture émise à un Client sur la base de timesheets validées.
+- **Employee** : un collaborateur qui travaille pour un ou plusieurs clients.
+- **Customer** : une société cliente.
+- **Assignment** : le lien entre un Employee et un Customer (qui travaille pour qui, à partir de quand).
+- **hourly_rate** : le tarif journalier d'un Employee chez un Customer. Donnée confidentielle.
+- **Timesheet** : la feuille de temps d'un Employee pour un mois donné chez un Customer.
+- **Invoice** : une facture émise à un Customer sur la base de timesheets validées.
 
 ## Confidentialités par rôle
 
-- **TJM** : visible uniquement par CEO et par le Client concerné pour ses propres employés. Masqué pour OM, RH, Employee, et pour les autres Clients.
-- **Factures d'un Client** : visibles uniquement par ce Client et les rôles internes (CEO, OM, RH).
-- **Timesheets cross-clients** : un Client ne voit que ses propres timesheets.
+- **hourly_rate** : visible uniquement par admin et par le Customer concerné pour ses propres collaborateurs. Masqué pour manager, hr-lead, employee, et pour les autres Customers.
+- **Factures d'un Customer** : visibles uniquement par ce Customer et les rôles internes (admin, manager, hr-lead).
+- **Timesheets cross-clients** : un Customer ne voit que ses propres timesheets.
 
 ## Sources à lire
 
 - **État global** : `project-state.md`
 - **Features** : `features/*.md`
 - **Specs features** : `features/*-spec.md`
-- **Migrations DB** : `supabase/migrations/`
+- **Migrations DB** : `db/migrations/`
 - **Conventions code** : `CONVENTIONS.md`
 - **Décisions** : `DECISIONS.md`
 - **Retours d'expérience agents** : `RETOUR-EXPERIENCE-AGENTS.md`
@@ -181,15 +181,15 @@ Généré par doc-generator au premier run, modifiable à la main.
 
 ## Glossaire
 
-- **TJM** : Taux Journalier Moyen — le prix d'une journée de travail d'un prestataire chez un client. Confidentiel.
-- **Timesheet** : la feuille de temps mensuelle d'un prestataire, qui liste les jours travaillés.
+- **hourly_rate** : tarif journalier d'un collaborateur chez un client. Confidentiel.
+- **Timesheet** : la feuille de temps mensuelle d'un collaborateur, qui liste les jours travaillés.
 - **RLS** : Row-Level Security — mécanisme Postgres qui filtre automatiquement les lignes visibles selon qui lit la table.
-- **OM** : Office Manager — rôle interne qui gère la facturation et les validations.
-- **Assignment** : l'affectation d'un prestataire à un client sur une période donnée.
+- **manager** : rôle interne qui gère la facturation et les validations.
+- **Assignment** : l'affectation d'un collaborateur à un client sur une période donnée.
 
 ## Conventions de nommage
 
-- **Features** : `f-[slug]` ou `f[N]-[slug]` (ex : `f-invite-email`, `f11-portal-home`)
+- **Features** : `f-[slug]` ou `f[N]-[slug]` (ex : `f-email-invites`, `f3-reporting`)
 - **Fiches de décision** : `decision-NNN-slug.md` (numérotation chronologique)
 - **Migrations** : `YYYYMMDDHHMMSS_description.sql`
 
@@ -197,21 +197,20 @@ Généré par doc-generator au premier run, modifiable à la main.
 
 - **orchestrateur** (agent principal) : **Opus** — il jongle avec tout le contexte projet et une erreur de sa part se paie en cascade sur toute la chaîne. Le coût se justifie par le risque.
 - **@architect** : **Opus** — raisonnement architectural profond. Une erreur dans le plan multiplie les itérations pour tous les agents derrière.
-- **@dba** : **Opus** — SQL + RLS = très haut risque (récursion, confidentialité TJM, intégrité référentielle). Pas de compromis.
+- **@dba** : **Opus** — SQL + RLS = très haut risque (récursion, confidentialité des tarifs, intégrité référentielle). Pas de compromis.
 - **@reviewer** : **Opus** — filet de sécurité à double passe (spec puis qualité) + investigation de bugs en 4 phases. Rater une régression RLS = bug en production.
-- **@coder** : **Sonnet** — génération de TypeScript en suivant un plan précis. Le raisonnement architectural est déjà fait par @architect.
+- **@coder** : **Sonnet** — génération de code en suivant un plan précis. Le raisonnement architectural est déjà fait par @architect.
 - **@tester** : **Sonnet** — écriture de scénarios de test structurés depuis une spec. Pas de créativité demandée.
 - **@e2etester** : **Sonnet** — exécute des scénarios déjà écrits via Playwright. Pas de raisonnement, juste de l'exécution fiable.
-- **@deployer** : **Sonnet** — suit un playbook strict. Pas de créativité, mais assez rigoureux pour détecter les patterns de build CF Pages — Haiku trop risqué.
+- **@deployer** : **Sonnet** — suit un playbook strict. Pas de créativité, mais assez rigoureux pour détecter les patterns de build du pipeline CI/CD.
 - **@scribe** : **Sonnet** — mémoire et édition de fichiers structurés. Pas de décision technique, risques faibles.
 - **Haiku** *(renfort ponctuel)* : utilisé par d'autres agents pour des audits rapides, des sweeps de lecture, ou des recherches massives (ex : sous-agent Explore pour cartographier un dossier avant décision).
 
 ## Anomalies et règles spéciales
 
-- Le TJM est une information strictement confidentielle. Ne jamais l'exposer dans un `how-to` ou une `reference` visible par un rôle autre que CEO ou le client concerné.
-- Toutes les pages dynamiques Next.js doivent déclarer `export const runtime = 'edge'` (contrainte Cloudflare Pages).
-- Les migrations Supabase prod et dev partagent la même base — toute migration impacte directement la prod. À mentionner clairement dans `reference/schema.md`.
-- Dev et prod partagent la même base Supabase en V1. À signaler dans `onboarding/README-dev.md`.
+- Le champ `hourly_rate` est une information strictement confidentielle. Ne jamais l'exposer dans un `how-to` ou une `reference` visible par un rôle autre qu'admin ou le client concerné.
+- Toutes les pages dynamiques doivent déclarer `export const runtime = 'edge'` (contrainte de la plateforme edge).
+- Les migrations prod et dev partagent la même base en V1 — toute migration impacte directement la prod. À mentionner clairement dans `reference/schema.md`.
 ```
 
 ---

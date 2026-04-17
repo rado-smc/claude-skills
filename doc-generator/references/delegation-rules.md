@@ -114,7 +114,7 @@ Règle : **3 sous-agents en parallèle maximum**. Au-delà, la complexité de su
 
 ## Coût et latence attendus
 
-Ordre de grandeur sur un projet ScaleERP-like (30 migrations, 50 features, 8 agents) :
+Ordre de grandeur sur un projet mature (30 migrations, 50 features, 8 agents) :
 
 | Phase | Acteur | Durée estimée | Coût relatif |
 |---|---|---|---|
