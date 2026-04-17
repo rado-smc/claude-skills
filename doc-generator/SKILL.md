@@ -1,6 +1,6 @@
 ---
 name: doc-generator
-description: Génère et maintient la documentation technique vivante d'un projet logiciel à partir de ses sources réelles — code, specs de features, migrations DB, agents, décisions, sessions. À utiliser systématiquement dès que l'utilisateur demande de créer, régénérer, mettre à jour, synchroniser ou rafraîchir la doc du projet, de documenter une feature qui vient d'être clôturée, de refléter une migration DB, ou chaque fois qu'une feature est livrée et qu'il faut en garder trace lisible. Déclenche aussi sur « fais la doc », « update docs », « documenter [slug] », « schema a changé », « génère la doc », « rafraîchis la doc », « documente ça », « documente ce changement », « mets la doc à jour », « met à jour la doc », « ajoute ça à la doc », « doc update », « sync la doc », « documentation ». **Invocable directement par l'humain ou par n'importe quel agent** — aucune dépendance à un agent spécifique. **Universel et portable** : fonctionne sur n'importe quel projet (Node, Python, Go, Rust, etc.), détecte automatiquement ce qui existe, dégrade gracieusement en mode bootstrap minimal sur un projet nu, et s'enrichit progressivement quand de nouvelles sources apparaissent. Produit une documentation pensée pour être lue par des non-techs (PO, client, nouveau dev) autant que par des techs.
+description: Génère et maintient la documentation technique vivante d'un projet logiciel à partir de ses sources réelles — code, backlog, migrations ou schémas de données, décisions, sessions. Universel et plateforme-agnostique : fonctionne sur n'importe quelle stack (Node, Python, Go, Rust, Ruby, PHP, monorepo, script...), détecte automatiquement les sources via detect_sources.py, et dégrade gracieusement sur un projet nu. Aucune dépendance à un framework d'orchestration, à un agent particulier, ou à un vocabulaire propriétaire — le skill s'adapte au projet via project-config.md. Produit une documentation pensée pour être lue par des non-techs (PO, client, nouveau dev) autant que par des techs. **À UTILISER** dès que l'utilisateur demande de créer, régénérer, mettre à jour, synchroniser ou rafraîchir la doc du projet (« fais la doc », « update docs », « documenter [slug] », « refresh documentation », « the schema changed », « génère la doc », « rafraîchis la doc », « documenter cette feature », « make the docs »). **DÉCLENCHE AUSSI DE SA PROPRE INITIATIVE** — sans attendre de demande explicite — quand Claude observe l'un de ces six événements : (T1) un élément de backlog vient de passer à un état terminal (done / closed / shipped / livré / déployé / ✅), quel que soit le vocabulaire de suivi employé ; (T2) un changement de schéma de données a été committé (nouvelle migration, nouveau fichier DDL, modification d'un schéma ORM comme schema.prisma, drizzle, alembic) ; (T3) une décision technique a été enregistrée (nouvelle fiche ADR, nouveau fichier decision-*, nouvelle entrée dans DECISIONS.md ou équivalent) ; (T4) un merge vient d'atterrir sur la branche par défaut (main / master / trunk) ; (T5) la documentation générée est plus ancienne que la dernière modification des sources suivies, révélant une dérive ; (T6) un fichier marker conventionnel (.doc-pending ou équivalent déclaré en config) est présent à la racine du repo. Ces événements sont des déclencheurs AU MÊME TITRE que les formules utilisateur. Le skill est invocable indifféremment par l'humain directement, par un sous-agent dans une pipeline multi-agents, ou par l'agent principal en mode mono-agent — il ne présuppose ni l'existence d'un @scribe, ni d'un @deployer, ni d'aucun autre orchestrateur.
 ---
 
 # doc-generator
@@ -85,6 +85,41 @@ Selon ce que la détection a trouvé, tu appliques l'un des trois modes décrits
 | **Enrichi** | Toutes les sources présentes (ScaleERP-like) | Produit l'intégralité de l'arbo |
 
 Une fois le mode identifié et la config chargée, passe à l'exécution du mode demandé (`generate`, `update`, `schema`, `bundle`).
+
+### 0.6 — Détecter les triggers actifs (si invoqué sans argument)
+
+Si le skill est appelé **sans argument explicite** (ni `generate`, ni `update [slug]`, ni `schema`, ni `bundle`), c'est qu'il doit décider seul de ce qu'il faut faire. Dans ce cas :
+
+```bash
+python3 .claude/skills/doc-generator/scripts/detect_triggers.py \
+  --root . \
+  --config .claude/skills/doc-generator/project-config.md
+```
+
+Le script retourne un JSON :
+
+```json
+{
+  "triggered": ["T1", "T2"],
+  "reasons": { "T1": "2 backlog items closed since 2026-04-15", ... },
+  "details": { "T1": ["features/f-xxx.md"], "T2": ["supabase/migrations/..."] },
+  "suggested_mode": "update"
+}
+```
+
+Action à appliquer :
+
+| Situation | Ce que fait le skill |
+|---|---|
+| `triggered` vide | Sort en signalant « aucun trigger actif, rien à faire ». N'écrit pas. |
+| `suggested_mode == "generate"` | Bascule sur le mode `generate` complet (premier run, sentinel absent). |
+| `suggested_mode == "schema"` | Bascule sur le mode `schema`. |
+| `suggested_mode == "update"` et **T6** marker présent | Lit `.doc-pending` pour savoir quels fichiers cibler, puis applique `update` pour chaque slug/migration identifié. |
+| `suggested_mode == "update"` sans T6 | Déduit le ou les slugs depuis les `details` retournés, puis applique `update`. |
+
+Pour la liste complète et la signification métier des six triggers, lire `references/triggers.md` (~120 lignes) avant de prendre une décision de mode non triviale.
+
+**Note sur T6** : si le marker `.doc-pending` a été consommé, le supprimer à la toute fin du run (après succès). Garder la trace dans le rapport : *« 3 événements marker traités, .doc-pending nettoyé »*. Si le run échoue, laisser le marker en place — un prochain run reprendra.
 
 ### 0.5 — Déléguer les lectures lourdes aux sous-agents
 
@@ -291,6 +326,22 @@ Ce script assemble tous les fichiers `.md` de `/docs/` en un **site HTML statiqu
 
 Si le script échoue (Python manquant, erreur de lecture), signale-le dans le rapport mais ne bloque pas le run. Les fichiers Markdown sont la source de vérité — le HTML est une couche de présentation.
 
+## Écriture du sentinel de génération
+
+À la toute fin du run (après HTML, après nettoyage éventuel de `.doc-pending`), écris le **sentinel** `docs/.last-generation`. Ce fichier sert à `detect_triggers.py` pour savoir depuis quand il doit chercher des événements nouveaux.
+
+Format — simple ligne horodatée + mode exécuté :
+
+```
+2026-04-17T14:22:31+00:00 | mode=update | slug=f-invite-email | files=3
+```
+
+Règles :
+- Créer le fichier s'il n'existe pas, sinon **overwrite** (pas d'append : seule la dernière génération nous intéresse).
+- Chemin configurable via la clé `sentinel` de `project-config.md` section Triggers. Valeur par défaut : `docs/.last-generation`.
+- Ne jamais écrire le sentinel si le run a échoué partiellement — on veut que le prochain run retrouve les mêmes événements à traiter.
+- Ne pas inclure de secret ni de chemin absolu utilisateur (pas de `/Users/...` ni `C:\Users\...`).
+
 ---
 
 ## Rapport de fin de run
@@ -337,11 +388,16 @@ Le rapport doit faire 15 lignes max. Pas de blabla.
 - `references/voice-patterns.md` — patterns avancés : anatomie des instructions, documentation des statuts et cycles de vie, micro-patterns linguistiques. **Lire avant d'écrire des `how-to/*` ou des sections de `reference/*` qui documentent des statuts.**
 - `references/portability.md` — matrice de portabilité : pour chaque fichier de sortie, les sources requises et les fallbacks si absentes. **Lire dans la phase de détection (Étape 0.4) pour décider du mode de fonctionnement.**
 - `references/delegation-rules.md` — règles de délégation aux sous-agents Haiku / Sonnet. **Lire avant toute phase de lecture lourde (Étape 0.5) pour décider qui fait quoi.**
+- `references/triggers.md` — les six déclencheurs abstraits (T1..T6), comment ils se détectent, comment les étendre. **Lire si le skill est invoqué sans argument explicite (Étape 0.6) ou si tu dois décider d'un mode en présence de plusieurs triggers.**
+- `references/hooks-sample.md` — guide d'activation optionnelle des hooks PostToolUse qui alimentent automatiquement le marker `.doc-pending`. **À ne lire que si l'utilisateur demande comment automatiser le déclenchement.**
 
 ## Scripts bundlés
 
 - `scripts/detect_sources.py` — détection déterministe des sources. **Exécuter en tout premier** lors de chaque run (Étape 0.1). Retourne un JSON sur stdout.
+- `scripts/detect_triggers.py` — détection des six triggers actifs (T1..T6) via `project-config.md` + git + sentinel. **Exécuter quand le skill est invoqué sans argument** (Étape 0.6) ; retourne un JSON avec `suggested_mode`.
 - `scripts/build_html_doc.py` — assemble les fichiers `.md` de `/docs/` en un site HTML statique autonome. **Exécuter automatiquement à la fin de chaque run.** Produit `docs/site.html`.
+- `scripts/trigger_hook.py` — script appelé par le hook PostToolUse (opt-in) ; classifie le fichier édité et ajoute une ligne à `.doc-pending` si pertinent. **Jamais exécuté directement par le skill — c'est le harnais qui l'appelle.**
+- `scripts/install_triggers_hook.py` / `scripts/uninstall_triggers_hook.py` — installation/désinstallation opt-in du hook ci-dessus dans `.claude/settings.json`. **Ne jamais les appeler au nom de l'utilisateur** — ils sont destinés à être lancés explicitement par un humain qui a lu le diff.
 
 ## Asset bundlé
 

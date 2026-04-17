@@ -72,6 +72,20 @@ Chemins relatifs depuis la racine du repo. Le skill lit ces chemins pour constru
 - **Types partagés** : [dossier — ex : src/types/ | ou `(aucune détectée)`]
 - **Agents Claude Code** : [dossier — ex : .claude/agents/ | ou `(aucune détectée)`]
 
+## Triggers
+
+Cette section mappe les six déclencheurs abstraits du skill (voir `references/triggers.md`) aux chemins concrets du projet. Elle est lue par `scripts/detect_triggers.py` et `scripts/trigger_hook.py`.
+
+**Clés attendues** (valeurs = globs relatifs au repo, séparés par virgule) :
+
+- **Backlog** : [pattern — ex : `features/*.md`, `backlog/*.md`]
+- **Migrations** : [pattern — ex : `supabase/migrations/*.sql`, `prisma/migrations/**/*.sql`]
+- **Decisions** : [pattern — ex : `DECISIONS.md`, `docs/adr/*.md`]
+- **Marker** : [nom de fichier — défaut : `.doc-pending`]
+- **Sentinel** : [nom de fichier — défaut : `docs/.last-generation`]
+
+Si la section est absente, `detect_triggers.py` utilise des valeurs par défaut couvrant les conventions les plus répandues (Supabase, Prisma, Drizzle, Alembic, Rails, Flyway, ADR Nygard, etc.). L'ajouter explicitement rend la détection plus fiable et évite les faux positifs sur des projets avec arborescences atypiques.
+
 ## Glossaire
 
 Les termes métier ou techniques à expliquer en premier dans la doc. Une définition courte, compréhensible par un non-tech.

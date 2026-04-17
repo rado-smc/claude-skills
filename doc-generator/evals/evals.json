@@ -3,54 +3,54 @@
   "evals": [
     {
       "id": 0,
-      "name": "generate-full-scaleerp",
-      "prompt": "Génère la documentation complète de ce projet ScaleERP dans un dossier `docs/` à la racine des outputs. Le projet est un ERP interne de gestion de facturation et de timesheets. Utilise comme sources : `project-state.md`, tout ce qu'il y a dans `features/`, toutes les migrations dans `supabase/migrations/`, `CONVENTIONS.md`, `DECISIONS.md`, `RETOUR-EXPERIENCE-AGENTS.md`. Les rôles sont : CEO, OM (Office Manager), RH, Employee, Client. Le TJM (Taux Journalier Moyen) est une donnée strictement confidentielle — visible uniquement par le CEO et par le client concerné. La doc doit pouvoir être lue par un office manager qui n'a jamais ouvert VS Code.",
-      "expected_output": "Arborescence docs/ complète : README.md, OVERVIEW.md, FEATURES.md, reference/ (schema, roles, conventions, decisions/), how-to/ par feature, explanation/ (architecture, agent-retex), onboarding/README-dev.md. Le fichier project-config.md doit exister dans .claude/skills/doc-generator/. Tous les fichiers horodatés. Pas de jargon non défini dans README/OVERVIEW/FEATURES/how-to.",
+      "name": "generate-full-generic-saas",
+      "prompt": "Generate the full documentation for this project into a `docs/` folder at the repository root. The project is an internal time-tracking and billing app called TeamBilling. Use the following sources: `project-state.md`, everything inside `features/`, all migrations in `db/migrations/`, `CONVENTIONS.md`, `DECISIONS.md`. The user roles are: admin, manager, employee, customer. The `hourly_rate` field is strictly confidential — visible only to admins and to the customer it concerns, hidden from managers and employees. The documentation must be readable by a non-technical manager who has never opened a code editor.",
+      "expected_output": "Complete `docs/` tree: README.md, OVERVIEW.md, FEATURES.md, reference/ (schema, roles, conventions, decisions/), how-to/ per feature, explanation/ (architecture, agents), onboarding/README-dev.md. A `project-config.md` is created under `.claude/skills/doc-generator/`. Every file carries a `Last updated` timestamp. No undefined jargon in README/OVERVIEW/FEATURES/how-to files.",
       "files": [],
       "assertions": [
-        {"text": "docs/README.md existe et contient la date du jour (2026-04-15)"},
-        {"text": "docs/OVERVIEW.md existe et fait moins de 150 lignes"},
-        {"text": "docs/FEATURES.md existe et contient au moins les features F1, F2, F3, F4, F11, F12 (présentes dans project-state)"},
-        {"text": "docs/reference/schema.md existe et liste au moins 3 tables issues des migrations"},
-        {"text": "docs/reference/roles.md existe et contient les 5 rôles (CEO, OM, RH, Employee, Client)"},
-        {"text": "docs/how-to/ contient au moins un fichier -guide.md par feature terminée"},
-        {"text": "docs/onboarding/README-dev.md existe"},
-        {"text": "Aucun fichier dans docs/ ne dépasse 150 lignes"},
-        {"text": "README.md ne contient pas les mots 'middleware', 'RLS' sans définition parenthèsée"},
-        {"text": "README.md, OVERVIEW.md, FEATURES.md ne contiennent pas 'nous', 'on a', 'j'ai'"},
-        {"text": "Un fichier .claude/skills/doc-generator/project-config.md est créé"},
-        {"text": "Le TJM est documenté comme confidentiel dans reference/roles.md ou OVERVIEW.md"}
+        {"text": "docs/README.md exists and contains today's date"},
+        {"text": "docs/OVERVIEW.md exists and is under 150 lines"},
+        {"text": "docs/FEATURES.md exists and lists every feature present in project-state.md"},
+        {"text": "docs/reference/schema.md exists and lists at least 3 tables derived from the migrations"},
+        {"text": "docs/reference/roles.md exists and lists all 4 roles (admin, manager, employee, customer)"},
+        {"text": "docs/how-to/ contains at least one -guide.md file per finished feature"},
+        {"text": "docs/onboarding/README-dev.md exists"},
+        {"text": "No file in docs/ exceeds 150 lines"},
+        {"text": "README.md does not contain acronyms like 'ORM', 'RLS', 'RPC' without a parenthetical definition"},
+        {"text": "README.md, OVERVIEW.md, FEATURES.md do not use first-person wording ('we', 'I have', 'our team')"},
+        {"text": "A file at .claude/skills/doc-generator/project-config.md is created"},
+        {"text": "The hourly_rate confidentiality rule is documented in reference/roles.md or OVERVIEW.md"}
       ]
     },
     {
       "id": 1,
       "name": "update-after-feature-closure",
-      "prompt": "La feature f-invite-email (F12) vient d'être clôturée et déployée en prod. Mets à jour la documentation pour refléter cette clôture. Sources à lire : features/f-invite-email.md, features/f-invite-email-spec.md, features/f-invite-email-plan.md, la migration supabase/migrations/20260414000001_f12_invite_email.sql, et la doc existante dans docs/. Suppose que docs/ contient déjà la structure générée précédemment (FEATURES.md avec F12 en 🔄, pas encore de how-to/f-invite-email-guide.md). Fais les modifications chirurgicales : tu ne touches que ce qui doit l'être.",
-      "expected_output": "FEATURES.md : F12 passée de 🔄 à ✅ avec date de clôture. how-to/f-invite-email-guide.md créé avec sections à quoi ça sert / qui peut l'utiliser / comment ça marche / mode d'emploi / limites / référence technique. Aucun autre fichier modifié sauf éventuellement README.md pour la stat 'features livrées'. Horodatage à jour sur les fichiers touchés.",
+      "prompt": "The feature `email-invites` has just been closed and shipped to production. Update the documentation to reflect the closure. Sources to read: features/email-invites.md, features/email-invites-spec.md, the migration db/migrations/20260601000001_email_invites.sql, and the existing documentation under docs/. Assume docs/ already contains the structure produced by a previous `generate` run (FEATURES.md with email-invites still marked in progress, no how-to/email-invites-guide.md yet). Make surgical edits: touch only what actually needs updating.",
+      "expected_output": "FEATURES.md: the email-invites row moves from the 'in progress' section to the 'done' section, with a closure date. A new how-to/email-invites-guide.md is created with sections 'What it does', 'Who can use it', 'How it works', 'How to use it', 'Limits', 'Technical reference'. No other files are modified, except possibly README.md for the 'features shipped' counter. Timestamps updated on every touched file.",
       "files": [],
       "assertions": [
-        {"text": "docs/FEATURES.md contient une entrée F12 dans le tableau ✅ Terminées"},
-        {"text": "docs/FEATURES.md ne contient plus F12 dans 🔄 En cours"},
-        {"text": "docs/how-to/f-invite-email-guide.md existe"},
-        {"text": "docs/how-to/f-invite-email-guide.md contient les sections 'À quoi ça sert', 'Comment ça marche', 'Mode d'emploi'"},
-        {"text": "docs/how-to/f-invite-email-guide.md fait moins de 150 lignes"},
-        {"text": "Au plus 3 fichiers modifiés au total (FEATURES.md + how-to + éventuel README)"},
-        {"text": "Horodatage des fichiers touchés = 2026-04-15"},
-        {"text": "Aucun fichier dans docs/reference/ n'est touché"}
+        {"text": "docs/FEATURES.md has an email-invites entry in the 'done' table"},
+        {"text": "docs/FEATURES.md no longer lists email-invites under 'in progress'"},
+        {"text": "docs/how-to/email-invites-guide.md exists"},
+        {"text": "docs/how-to/email-invites-guide.md contains the sections 'What it does', 'How it works', 'How to use it'"},
+        {"text": "docs/how-to/email-invites-guide.md is under 150 lines"},
+        {"text": "At most 3 files are modified in total (FEATURES.md + the new how-to + optionally README.md)"},
+        {"text": "Touched files carry today's date"},
+        {"text": "No file under docs/reference/ is modified"}
       ]
     },
     {
       "id": 2,
       "name": "schema-after-migration",
-      "prompt": "Une nouvelle migration a été appliquée : supabase/migrations/20260414000001_f12_invite_email.sql. Mets à jour uniquement reference/schema.md (et reference/roles.md si les politiques RLS changent) pour refléter les tables et colonnes ajoutées par cette migration. Ne touche à rien d'autre. Suppose que reference/schema.md existe déjà avec un état antérieur.",
-      "expected_output": "reference/schema.md mis à jour : nouvelles tables ou colonnes de la migration f12 ajoutées, avec types, RLS, et une phrase métier. Si la migration touche aux policies, reference/roles.md est mis à jour. Aucun autre fichier modifié. En-tête 'Dernière migration' mis à jour.",
+      "prompt": "A new migration has been applied: db/migrations/20260601000001_email_invites.sql. Update only reference/schema.md (and reference/roles.md if access policies change) to reflect the new tables and columns. Do not touch anything else. Assume reference/schema.md already exists from a previous run.",
+      "expected_output": "reference/schema.md is updated: new tables or columns from the migration are added with their types, access rules, and a one-line business explanation. If the migration touches access policies, reference/roles.md is updated too. No other file is modified. The 'Latest migration' header in schema.md is bumped to the new filename.",
       "files": [],
       "assertions": [
-        {"text": "docs/reference/schema.md a été modifié"},
-        {"text": "docs/reference/schema.md contient le nom de la migration 20260414000001_f12_invite_email.sql dans son en-tête"},
-        {"text": "Aucun fichier hors de docs/reference/ n'a été modifié"},
-        {"text": "docs/reference/schema.md fait moins de 150 lignes (ou est scindé proprement)"},
-        {"text": "Les nouveaux éléments de schéma sont décrits avec une phrase métier, pas uniquement du SQL brut"}
+        {"text": "docs/reference/schema.md has been modified"},
+        {"text": "docs/reference/schema.md mentions the migration filename 20260601000001_email_invites.sql in its header"},
+        {"text": "No file outside docs/reference/ has been modified"},
+        {"text": "docs/reference/schema.md stays under 150 lines (or is cleanly split)"},
+        {"text": "New schema elements are described with a plain business sentence, not raw SQL only"}
       ]
     }
   ]
